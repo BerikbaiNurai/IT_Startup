@@ -1,0 +1,80 @@
+class Product {
+  final String id;
+  final String name;
+  final String description;
+  final double price; // Buy price
+  final double rentPricePerDay; // Rent price per day
+  final double deposit;
+  final List<String> images;
+  final double rating;
+  final int reviewCount;
+  final String category;
+  final String ownerId;
+  final String ownerName;
+  final double ownerRating;
+  final String location;
+  final bool isFavorite;
+  final bool isRental; // Can be rented
+  final String condition; // New, Good, Used
+
+  Product({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.price,
+    required this.rentPricePerDay,
+    required this.deposit,
+    this.images = const [],
+    this.rating = 0.0,
+    this.reviewCount = 0,
+    required this.category,
+    required this.ownerId,
+    required this.ownerName,
+    this.ownerRating = 0.0,
+    required this.location,
+    this.isFavorite = false,
+    this.isRental = true,
+    this.condition = 'Good',
+  });
+
+  Product copyWith({
+    String? id,
+    String? name,
+    String? description,
+    double? price,
+    double? rentPricePerDay,
+    double? deposit,
+    List<String>? images,
+    double? rating,
+    int? reviewCount,
+    String? category,
+    String? ownerId,
+    String? ownerName,
+    double? ownerRating,
+    String? location,
+    bool? isFavorite,
+    bool? isRental,
+    String? condition,
+  }) {
+    return Product(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      price: price ?? this.price,
+      rentPricePerDay: rentPricePerDay ?? this.rentPricePerDay,
+      deposit: deposit ?? this.deposit,
+      images: images ?? this.images,
+      rating: rating ?? this.rating,
+      reviewCount: reviewCount ?? this.reviewCount,
+      category: category ?? this.category,
+      ownerId: ownerId ?? this.ownerId,
+      ownerName: ownerName ?? this.ownerName,
+      ownerRating: ownerRating ?? this.ownerRating,
+      location: location ?? this.location,
+      isFavorite: isFavorite ?? this.isFavorite,
+      isRental: isRental ?? this.isRental,
+      condition: condition ?? this.condition,
+    );
+  }
+}
+
