@@ -29,18 +29,27 @@ class _RentalConfirmationPageState extends State<RentalConfirmationPage> {
 
     final rentalProvider = Provider.of<RentalProvider>(context, listen: false);
     final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
-    // final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    // final user = authProvider.currentUser;
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final user = authProvider.currentUser;
+    if (user == null) {
+      setState(() => _isLoading = false);
+      return;
+    }
 
     await Future.delayed(const Duration(seconds: 1));
 
-    rentalProvider.addUserRental(widget.product);
+    rentalProvider.createRentalRequest(
+      product: widget.product,
+      renterId: user.id,
+      renterName: user.name,
+      days: _days,
+    );
 
     notificationProvider.addNotification(
       NotificationModel(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
-        title: 'Аренда подтверждена',
-        message: 'Вы арендовали "${widget.product.name}" на $_days ${_days == 1 ? 'день' : 'дней'}',
+        title: 'Запрос отправлен',
+        message: 'Запрос на "${widget.product.name}" отправлен владельцу',
         date: DateTime.now(),
         type: 'rental',
       ),
@@ -49,7 +58,7 @@ class _RentalConfirmationPageState extends State<RentalConfirmationPage> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Аренда успешно подтверждена!'),
+          content: Text('Запрос на аренду отправлен'),
           backgroundColor: Colors.green,
         ),
       );

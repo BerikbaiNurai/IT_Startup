@@ -1,12 +1,18 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import '../data/models/product.dart';
 import '../data/mock_data.dart';
+import '../core/services/local_database_service.dart';
 
 class ProductProvider with ChangeNotifier {
-  List<Product> _products = MockData.products;
+  List<Product> _products = [];
   List<Product> _favorites = [];
   String _searchQuery = '';
   String _selectedCategory = 'Все';
+
+  ProductProvider() {
+    _loadProducts();
+  }
 
   List<Product> get products => _filteredProducts;
   List<Product> get favorites => _favorites;
@@ -57,6 +63,7 @@ class ProductProvider with ChangeNotifier {
         _favorites.removeWhere((p) => p.id == productId);
       }
       
+      unawaited(_saveProducts());
       notifyListeners();
     }
   }
@@ -75,11 +82,34 @@ class ProductProvider with ChangeNotifier {
 
   void addProduct(Product product) {
     _products.insert(0, product);
+    unawaited(_saveProducts());
     notifyListeners();
   }
 
   List<Product> getRentalProducts() {
     return _products.where((p) => p.isRental).toList();
+  }
+
+  void _loadProducts() {
+    final box = LocalDatabaseService.getBox(LocalDatabaseService.productsBox);
+    final stored = box.get('items');
+
+    if (stored is List && stored.isNotEmpty) {
+      _products = stored
+          .map((e) => Product.fromMap(Map<dynamic, dynamic>.from(e)))
+          .toList();
+    } else {
+      _products = List<Product>.from(MockData.products);
+      unawaited(_saveProducts());
+    }
+    _favorites = _products.where((p) => p.isFavorite).toList();
+    notifyListeners();
+  }
+
+  Future<void> _saveProducts() async {
+    final box = LocalDatabaseService.getBox(LocalDatabaseService.productsBox);
+    await box.put('items', _products.map((p) => p.toMap()).toList());
+    await box.flush();
   }
 }
 

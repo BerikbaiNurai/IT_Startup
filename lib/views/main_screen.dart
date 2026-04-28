@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../views/home/home_screen.dart';
-import '../views/search/search_screen.dart';
+import '../views/rental/my_rentals_page.dart';
 import '../views/cart/cart_screen.dart';
+import '../views/messages/messages_screen.dart';
+import '../views/favorites/favorites_screen.dart';
 import '../views/profile/profile_screen.dart';
-import '../viewmodels/notification_provider.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -18,8 +18,10 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     const HomeScreen(),
-    const SearchScreen(),
+    const MyRentalsPage(),
     const CartScreen(),
+    const MessagesScreen(),
+    const FavoritesScreen(),
     const ProfileScreen(),
   ];
 
@@ -30,34 +32,44 @@ class _MainScreenState extends State<MainScreen> {
         index: _currentIndex,
         children: _screens,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
+      bottomNavigationBar: NavigationBar(
+        height: 72,
+        selectedIndex: _currentIndex,
+        onDestinationSelected: (index) {
           setState(() {
             _currentIndex = index;
           });
         },
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
+        destinations: const [
+          NavigationDestination(
             icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Главная',
+            selectedIcon: Icon(Icons.home),
+            label: 'Home',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search_outlined),
-            activeIcon: Icon(Icons.search),
-            label: 'Поиск',
+          NavigationDestination(
+            icon: Icon(Icons.handshake_outlined),
+            selectedIcon: Icon(Icons.handshake),
+            label: 'Rentals',
           ),
-          BottomNavigationBarItem(
+          NavigationDestination(
             icon: Icon(Icons.shopping_cart_outlined),
-            activeIcon: Icon(Icons.shopping_cart),
-            label: 'Корзина',
+            selectedIcon: Icon(Icons.shopping_cart),
+            label: 'Cart',
           ),
-          BottomNavigationBarItem(
+          NavigationDestination(
+            icon: Icon(Icons.chat_bubble_outline),
+            selectedIcon: Icon(Icons.chat_bubble),
+            label: 'Chats',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.favorite_border),
+            selectedIcon: Icon(Icons.favorite),
+            label: 'Favorites',
+          ),
+          NavigationDestination(
             icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Профиль',
+            selectedIcon: Icon(Icons.person),
+            label: 'Profile',
           ),
         ],
       ),

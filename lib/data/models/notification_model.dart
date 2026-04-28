@@ -32,5 +32,27 @@ class NotificationModel {
       type: type ?? this.type,
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'message': message,
+      'date': date.toIso8601String(),
+      'isRead': isRead,
+      'type': type,
+    };
+  }
+
+  factory NotificationModel.fromMap(Map<dynamic, dynamic> map) {
+    return NotificationModel(
+      id: map['id'] ?? '',
+      title: map['title'] ?? '',
+      message: map['message'] ?? '',
+      date: DateTime.tryParse(map['date'] ?? '') ?? DateTime.now(),
+      isRead: map['isRead'] ?? false,
+      type: map['type'],
+    );
+  }
 }
 

@@ -25,6 +25,26 @@ class _PaymentScreenState extends State<PaymentScreen> {
   final _expiryController = TextEditingController();
   final _cvvController = TextEditingController();
   bool _isLoading = false;
+  int? _selectedCardIndex = 0;
+  late final List<_SavedCard> _savedCards;
+
+  @override
+  void initState() {
+    super.initState();
+    _savedCards = [
+      const _SavedCard(
+        holderName: 'TrustRent User',
+        cardNumber: '4111111111111234',
+        expiry: '12/28',
+      ),
+      const _SavedCard(
+        holderName: 'TrustRent User',
+        cardNumber: '5555555555559876',
+        expiry: '09/27',
+      ),
+    ];
+    _fillFormFromSelectedCard();
+  }
 
   @override
   void dispose() {
@@ -35,13 +55,41 @@ class _PaymentScreenState extends State<PaymentScreen> {
     super.dispose();
   }
 
+  void _fillFormFromSelectedCard() {
+    if (_selectedCardIndex == null) return;
+    final card = _savedCards[_selectedCardIndex!];
+    _cardNumberController.text = card.cardNumber;
+    _cardholderNameController.text = card.holderName;
+    _expiryController.text = card.expiry;
+    _cvvController.clear();
+  }
+
+  void _onCardFormChanged() {
+    if (_selectedCardIndex != null) {
+      setState(() => _selectedCardIndex = null);
+    }
+  }
+
   Future<void> _processPayment() async {
-    if (_cardNumberController.text.isEmpty ||
-        _cardholderNameController.text.isEmpty ||
-        _expiryController.text.isEmpty ||
-        _cvvController.text.isEmpty) {
+    final hasSelectedCard = _selectedCardIndex != null;
+    final hasNewCardData = _cardNumberController.text.trim().isNotEmpty ||
+        _cardholderNameController.text.trim().isNotEmpty ||
+        _expiryController.text.trim().isNotEmpty ||
+        _cvvController.text.trim().isNotEmpty;
+
+    if (!hasSelectedCard && !hasNewCardData) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Заполните все поля')),
+        const SnackBar(content: Text('Выберите карту или введите новую')),
+      );
+      return;
+    }
+    if (!hasSelectedCard &&
+        (_cardNumberController.text.trim().isEmpty ||
+            _cardholderNameController.text.trim().isEmpty ||
+            _expiryController.text.trim().isEmpty ||
+            _cvvController.text.trim().isEmpty)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Заполните все поля новой карты')),
       );
       return;
     }
@@ -52,6 +100,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
     final orderProvider = Provider.of<OrderProvider>(context, listen: false);
 
     await Future.delayed(const Duration(seconds: 2));
+
+    if (!hasSelectedCard) {
+      _savedCards.insert(
+        0,
+        _SavedCard(
+          holderName: _cardholderNameController.text.trim(),
+          cardNumber: _cardNumberController.text.trim(),
+          expiry: _expiryController.text.trim(),
+        ),
+      );
+      _selectedCardIndex = null;
+    }
 
     final order = await orderProvider.createOrder(
       items: cartProvider.items,
@@ -87,72 +147,42 @@ class _PaymentScreenState extends State<PaymentScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Payment Cards Preview
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primary,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                '**** **** **** 1234',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  letterSpacing: 2,
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text(
-                                    'Берикбай Нурай',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  const Text(
-                                    '09/25',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade300,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Center(
-                            child: Icon(Icons.add, size: 32),
-                          ),
-                        ),
-                      ),
-                    ],
+                  Text(
+                    'Выберите карту',
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
+                  const SizedBox(height: 12),
+                  ...List.generate(_savedCards.length, (index) {
+                    final card = _savedCards[index];
+                    return Card(
+                      child: RadioListTile<int>(
+                        value: index,
+                        groupValue: _selectedCardIndex,
+                        onChanged: (value) {
+                          if (value == null) return;
+                          setState(() {
+                            _selectedCardIndex = value;
+                            _fillFormFromSelectedCard();
+                          });
+                        },
+                        title: Text(card.masked),
+                        subtitle: Text('${card.holderName}  •  ${card.expiry}'),
+                      ),
+                    );
+                  }),
 
                   const SizedBox(height: 24),
 
                   // Card Form
                   Text(
-                    'Добавить карточку',
+                    'Добавить новую карту (опционально)',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 16),
 
                   TextField(
                     controller: _cardNumberController,
+                    onChanged: (_) => _onCardFormChanged(),
                     decoration: const InputDecoration(
                       labelText: 'Номер карты',
                       hintText: '1234 5678 9012 3456',
@@ -164,6 +194,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
                   TextField(
                     controller: _cardholderNameController,
+                    onChanged: (_) => _onCardFormChanged(),
                     decoration: const InputDecoration(
                       labelText: 'Имя пользователя',
                       hintText: 'Берикбай Нурай',
@@ -177,6 +208,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       Expanded(
                         child: TextField(
                           controller: _expiryController,
+                          onChanged: (_) => _onCardFormChanged(),
                           decoration: const InputDecoration(
                             labelText: 'Дата срока',
                             hintText: 'MM/YY',
@@ -188,6 +220,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       Expanded(
                         child: TextField(
                           controller: _cvvController,
+                          onChanged: (_) => _onCardFormChanged(),
                           decoration: const InputDecoration(
                             labelText: 'CVV',
                             hintText: '123',
@@ -277,6 +310,24 @@ class _PaymentScreenState extends State<PaymentScreen> {
         ],
       ),
     );
+  }
+}
+
+class _SavedCard {
+  final String holderName;
+  final String cardNumber;
+  final String expiry;
+
+  const _SavedCard({
+    required this.holderName,
+    required this.cardNumber,
+    required this.expiry,
+  });
+
+  String get masked {
+    final value = cardNumber.replaceAll(' ', '');
+    if (value.length < 4) return '****';
+    return '**** **** **** ${value.substring(value.length - 4)}';
   }
 }
 

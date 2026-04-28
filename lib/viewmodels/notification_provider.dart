@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import '../data/models/notification_model.dart';
+import '../core/services/local_database_service.dart';
 
 class NotificationProvider with ChangeNotifier {
   final List<NotificationModel> _notifications = [
@@ -27,6 +29,10 @@ class NotificationProvider with ChangeNotifier {
     ),
   ];
 
+  NotificationProvider() {
+    _loadNotifications();
+  }
+
   List<NotificationModel> get notifications => List.unmodifiable(_notifications);
 
   int get unreadCount => _notifications.where((n) => !n.isRead).length;
@@ -35,6 +41,7 @@ class NotificationProvider with ChangeNotifier {
     final index = _notifications.indexWhere((n) => n.id == notificationId);
     if (index >= 0) {
       _notifications[index] = _notifications[index].copyWith(isRead: true);
+      unawaited(_saveNotifications());
       notifyListeners();
     }
   }
@@ -45,12 +52,37 @@ class NotificationProvider with ChangeNotifier {
         _notifications[i] = _notifications[i].copyWith(isRead: true);
       }
     }
+    unawaited(_saveNotifications());
     notifyListeners();
   }
 
   void addNotification(NotificationModel notification) {
     _notifications.insert(0, notification);
+    unawaited(_saveNotifications());
     notifyListeners();
+  }
+
+  void _loadNotifications() {
+    final box = LocalDatabaseService.getBox(LocalDatabaseService.notificationsBox);
+    final stored = box.get('items');
+    if (stored is List && stored.isNotEmpty) {
+      _notifications
+        ..clear()
+        ..addAll(
+          stored.map(
+            (e) => NotificationModel.fromMap(Map<dynamic, dynamic>.from(e)),
+          ),
+        );
+      notifyListeners();
+    } else {
+      unawaited(_saveNotifications());
+    }
+  }
+
+  Future<void> _saveNotifications() async {
+    final box = LocalDatabaseService.getBox(LocalDatabaseService.notificationsBox);
+    await box.put('items', _notifications.map((e) => e.toMap()).toList());
+    await box.flush();
   }
 }
 

@@ -4,8 +4,10 @@ import 'package:intl/intl.dart';
 import '../../viewmodels/product_provider.dart';
 import '../../viewmodels/cart_provider.dart';
 import '../../viewmodels/auth_provider.dart';
+import '../../viewmodels/rental_provider.dart';
 import '../../core/utils/format_utils.dart';
 import '../../core/constants/app_constants.dart';
+import '../messages/chat_detail_screen.dart';
 import '../rental/rental_confirmation_page.dart';
 
 class ProductDetailScreen extends StatelessWidget {
@@ -17,6 +19,8 @@ class ProductDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final productProvider = Provider.of<ProductProvider>(context);
     final cartProvider = Provider.of<CartProvider>(context);
+    final rentalProvider = Provider.of<RentalProvider>(context, listen: false);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final product = productProvider.getProductById(productId);
 
     if (product == null) {
@@ -252,6 +256,33 @@ class ProductDetailScreen extends StatelessWidget {
                       ),
                     ),
                   if (product.isRental) const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        final userId = authProvider.currentUser?.id;
+                        if (userId == null) return;
+                        rentalProvider.sendMessage(
+                          fromUserId: userId,
+                          toUserId: product.ownerId,
+                          productId: product.id,
+                          text: 'Hi! I am interested in "${product.name}". Is it available?',
+                        );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ChatDetailScreen(
+                              peerUserId: product.ownerId,
+                              peerTitle: product.ownerName,
+                            ),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.chat_bubble_outline),
+                      label: const Text('Message Owner'),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
                   SizedBox(
                     width: double.infinity,
                     child: OutlinedButton.icon(

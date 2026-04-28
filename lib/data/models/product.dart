@@ -76,5 +76,49 @@ class Product {
       condition: condition ?? this.condition,
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'description': description,
+      'price': price,
+      'rentPricePerDay': rentPricePerDay,
+      'deposit': deposit,
+      'images': images,
+      'rating': rating,
+      'reviewCount': reviewCount,
+      'category': category,
+      'ownerId': ownerId,
+      'ownerName': ownerName,
+      'ownerRating': ownerRating,
+      'location': location,
+      'isFavorite': isFavorite,
+      'isRental': isRental,
+      'condition': condition,
+    };
+  }
+
+  factory Product.fromMap(Map<dynamic, dynamic> map) {
+    return Product(
+      id: map['id'] ?? '',
+      name: map['name'] ?? '',
+      description: map['description'] ?? '',
+      price: (map['price'] ?? 0).toDouble(),
+      rentPricePerDay: (map['rentPricePerDay'] ?? 0).toDouble(),
+      deposit: (map['deposit'] ?? 0).toDouble(),
+      images: List<String>.from(map['images'] ?? const []),
+      rating: (map['rating'] ?? 0).toDouble(),
+      reviewCount: (map['reviewCount'] ?? 0).toInt(),
+      category: map['category'] ?? '',
+      ownerId: map['ownerId'] ?? '',
+      ownerName: map['ownerName'] ?? '',
+      ownerRating: (map['ownerRating'] ?? 0).toDouble(),
+      location: map['location'] ?? '',
+      isFavorite: map['isFavorite'] ?? false,
+      isRental: map['isRental'] ?? true,
+      condition: map['condition'] ?? 'Good',
+    );
+  }
 }
 

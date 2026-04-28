@@ -21,5 +21,19 @@ class CartItem {
       quantity: quantity ?? this.quantity,
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'product': product.toMap(),
+      'quantity': quantity,
+    };
+  }
+
+  factory CartItem.fromMap(Map<dynamic, dynamic> map) {
+    return CartItem(
+      product: Product.fromMap(map['product'] as Map<dynamic, dynamic>),
+      quantity: (map['quantity'] ?? 1).toInt(),
+    );
+  }
 }
 

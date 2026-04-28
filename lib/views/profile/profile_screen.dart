@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../viewmodels/auth_provider.dart';
+import '../../viewmodels/rental_provider.dart';
 import '../settings/settings_screen.dart';
 import '../orders/orders_screen.dart';
 import '../auth/auth_screen.dart';
@@ -14,6 +15,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
+    final rentalProvider = Provider.of<RentalProvider>(context);
     final user = authProvider.currentUser;
 
     if (user == null) {
@@ -80,6 +82,18 @@ class ProfileScreen extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                   ],
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.star, color: Colors.amber, size: 20),
+                      const SizedBox(width: 6),
+                      Text(
+                        '${rentalProvider.getAverageRatingForUser(user.id).toStringAsFixed(1)} (${rentalProvider.getReviewsCountForUser(user.id)})',
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),

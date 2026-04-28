@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'core/theme/app_theme.dart';
+import 'core/services/local_database_service.dart';
 import 'viewmodels/auth_provider.dart';
 import 'viewmodels/cart_provider.dart';
 import 'viewmodels/product_provider.dart';
@@ -10,7 +11,9 @@ import 'viewmodels/notification_provider.dart';
 import 'views/main_screen.dart';
 import 'views/auth/auth_screen.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await LocalDatabaseService.init();
   runApp(const TrustRentApp());
 }
 

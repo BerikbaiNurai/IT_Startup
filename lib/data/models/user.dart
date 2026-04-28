@@ -40,5 +40,31 @@ class User {
       totalOrders: totalOrders ?? this.totalOrders,
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'email': email,
+      'phone': phone,
+      'avatarUrl': avatarUrl,
+      'bio': bio,
+      'rating': rating,
+      'totalOrders': totalOrders,
+    };
+  }
+
+  factory User.fromMap(Map<dynamic, dynamic> map) {
+    return User(
+      id: map['id'] ?? '',
+      name: map['name'] ?? '',
+      email: map['email'] ?? '',
+      phone: map['phone'],
+      avatarUrl: map['avatarUrl'],
+      bio: map['bio'],
+      rating: (map['rating'] ?? 0).toDouble(),
+      totalOrders: (map['totalOrders'] ?? 0).toInt(),
+    );
+  }
 }
 

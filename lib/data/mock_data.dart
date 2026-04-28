@@ -17,7 +17,7 @@ class MockData {
       location: 'Москва',
       rating: 4.9,
       reviewCount: 3245,
-      images: ['https://images.unsplash.com/photo-1519183071298-a2962be90b8e'],
+      images: ['https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1200&q=80'],
       condition: 'Good',
     ),
     Product(
@@ -34,7 +34,7 @@ class MockData {
       location: 'Санкт-Петербург',
       rating: 4.7,
       reviewCount: 1823,
-      images: ['https://images.unsplash.com/photo-1518444065439-e933c06ce9cd'],
+      images: ['https://images.unsplash.com/photo-1518444065439-e933c06ce9cd?auto=format&fit=crop&w=1200&q=80'],
       condition: 'New',
     ),
     Product(
@@ -51,7 +51,7 @@ class MockData {
       location: 'Москва',
       rating: 4.6,
       reviewCount: 456,
-      images: ['https://images.unsplash.com/photo-1517649763962-0c623066013b'],
+      images: ['https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=1200&q=80'],
       condition: 'Good',
     ),
     Product(
@@ -68,7 +68,7 @@ class MockData {
       location: 'Казань',
       rating: 4.5,
       reviewCount: 789,
-      images: ['https://images.unsplash.com/photo-1500530855697-b586d89ba3ee'],
+      images: ['https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80'],
       condition: 'Used',
     ),
     Product(
@@ -85,7 +85,7 @@ class MockData {
       location: 'Новосибирск',
       rating: 4.8,
       reviewCount: 1234,
-      images: ['https://images.unsplash.com/photo-1507038732509-8b1a9623221f'],
+      images: ['https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=1200&q=80'],
       condition: 'Good',
     ),
     Product(
@@ -102,7 +102,7 @@ class MockData {
       location: 'Москва',
       rating: 4.9,
       reviewCount: 5678,
-      images: ['https://images.unsplash.com/photo-1606144042614-b2417e99c4e3'],
+      images: ['https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80'],
       condition: 'New',
     ),
     Product(
@@ -119,7 +119,7 @@ class MockData {
       location: 'Москва',
       rating: 4.7,
       reviewCount: 234,
-      images: ['https://images.unsplash.com/photo-1551524164-6cf77f7f1c4e'],
+      images: ['https://images.unsplash.com/photo-1517673132405-a56a62b18caf?auto=format&fit=crop&w=1200&q=80'],
       condition: 'Good',
     ),
     Product(
@@ -136,7 +136,7 @@ class MockData {
       location: 'Алматы',
       rating: 4.6,
       reviewCount: 567,
-      images: ['https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4'],
+      images: ['https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=80'],
       condition: 'New',
     ),
   ];
@@ -146,7 +146,7 @@ class MockData {
     name: 'Берикбай Нурай',
     email: 'berikbay@example.com',
     phone: '+7 777 123 4567',
-    avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde',
+    avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=800&q=80',
     bio: 'Люблю арендовать и делиться вещами',
     rating: 4.5,
     totalOrders: 5,
